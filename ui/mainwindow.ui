@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>590</width>
+    <height>521</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QLineEdit" name="lineEdit">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>521</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="frame">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton">
+    <property name="geometry">
+     <rect>
+      <x>540</x>
+      <y>10</y>
+      <width>42</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="listWidget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>60</y>
+      <width>571</width>
+      <height>441</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: none;
+font-size: 22px;
+QListWidget {
+    border: 1px solid #D3D3D3;
+    border-radius: 5px;
+}
+
+QScrollBar:vertical {
+    border: none;
+    background: #F0F0F0;
+    width: 12px;
+    margin: 0px 0px 0px 0px;
+}
+
+QScrollBar::handle:vertical {
+    background: #888;
+    border-radius: 6px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background: #555;
+}
+
+QScrollBar::add-line:vertical {
+    border: none;
+    background: #F0F0F0;
+    height: 0px;
+}
+
+QScrollBar::sub-line:vertical {
+    border: none;
+    background: #F0F0F0;
+    height: 0px;
+}</string>
+    </property>
+    <item>
+     <property name="text">
+      <string>fgadfda</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>gfda</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>gadf</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>gdaf</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>gafd</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>jhgra</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>jgare</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>ea</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>heafg</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>gea</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>hgea</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>hgea</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>hgea</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>hgae</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>gea</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>hgea</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>gfda</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>gafd</string>
+     </property>
+    </item>
+   </widget>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
