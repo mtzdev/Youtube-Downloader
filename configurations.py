@@ -1,34 +1,92 @@
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QFrame, QComboBox, QPushButton
-from PySide6.QtCore import Qt, QRect
+from PySide6.QtWidgets import QWidget, QFrame, QComboBox, QPushButton, QLabel, QFileDialog
+from PySide6.QtCore import Qt, QRect, Signal, Slot
 
-class Configuration(QWidget):
+class DownloadSettings(QWidget):
     def __init__(self):
         super().__init__()
+        self.video = ''  # TODO: passar informações do vídeo para mostrar no qframe
+        self.mp4Types = ["1080p", "720p", "480p", "360p"]
+        self.mp3Types = ["320kbps", "256kbps", "192kbps", "128kbps"]
+
+        self.setupUI()
+        self.fileFormatBox.currentTextChanged.connect(lambda formatType: self.updateQualityBox(formatType))
+
+    def setupUI(self):
+        self.setWindowTitle("Configurações de Download")
         self.setFixedSize(340, 280)
 
         self.videoInfo = QFrame(self)
         self.videoInfo.setGeometry(QRect(10, 10, 321, 61))
         self.videoInfo.setFrameShape(QFrame.Shape.Box)
 
-
         self.fileFormatBox = QComboBox(self)
-        self.fileFormatBox.addItem(".mp4")
-        self.fileFormatBox.addItem(".mp3")
+        self.fileFormatBox.addItem(".mp4 (Video)")
+        self.fileFormatBox.addItem(".mp3 (Audio)")
         self.fileFormatBox.setGeometry(QRect(20, 120, 141, 31))
-        self.fileFormatBox.setStyleSheet(u"font: 16px \"Segoe UI\";\nborder-radius: 6px;")
+        self.fileFormatBox.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.fileFormatBox.setStyleSheet("font: 16px \"Segoe UI\";\nborder-radius: 6px;")
 
         self.qualityBox = QComboBox(self)
-        self.qualityBox.addItem("1080p")
-        self.qualityBox.addItem("720p")
-        self.qualityBox.addItem("480p")
+        self.qualityBox.addItems(self.mp4Types)
         self.qualityBox.setGeometry(QRect(180, 120, 141, 31))
-        self.qualityBox.setStyleSheet(u"font: 16px \"Segoe UI\";\nborder-radius: 6px;")
+        self.qualityBox.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.qualityBox.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
+        self.qualityBox.setStyleSheet("font: 16px \"Segoe UI\";\nborder-radius: 6px;")
 
         self.pushButton = QPushButton(self)
         self.pushButton.setText("BAIXAR")
         self.pushButton.setGeometry(QRect(95, 190, 151, 41))
-        self.pushButton.setStyleSheet(u"font:24px bold \"Segoe UI\";")
+        self.pushButton.setStyleSheet("font:24px bold \"Segoe UI\";")
 
+    @Slot()
+    def updateQualityBox(self, formatType: str):
+        formats = {
+            ".mp4 (Video)": self.mp4Types,
+            ".mp3 (Audio)": self.mp3Types
+        }
+        self.qualityBox.clear()
+        self.qualityBox.addItems(formats[formatType])
+
+    def showConfigs(self):
+        self.show()
+
+class MainSettings(QWidget):
+    themeChanged = Signal(str)
+
+    def __init__(self):
+        super().__init__()
+        self.path = None
+
+        self.setupUI()
+
+    def setupUI(self):
+        self.setWindowTitle("Configurações")
+        self.setFixedSize(229, 238)
+
+        self.themeLabel = QLabel('Tema:', self)
+        self.themeLabel.setGeometry(QRect(20, 30, 70, 32))
+        self.themeLabel.setStyleSheet("font: 18pt \"Segoe UI\";")
+
+        self.themeSelector = QComboBox(self)
+        self.themeSelector.addItem("Claro")
+        self.themeSelector.addItem("Escuro")
+        self.themeSelector.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.themeSelector.setCurrentText("Escuro")
+        self.themeSelector.setGeometry(QRect(100, 30, 81, 30))
+        self.themeSelector.setStyleSheet("font: 18px \"Segoe UI\"; border-radius: 6px")
+        self.themeSelector.currentTextChanged.connect(self.themeChanged.emit)
+
+        self.downloadPathLabel = QLabel("Local de Download:", self)  # TODO: implementar botão e logica para definir local de download
+        self.downloadPathLabel.setGeometry(QRect(10, 80, 210, 31))
+        self.downloadPathLabel.setStyleSheet("font: 17pt \"Segoe UI\";")
+
+        self.downloadPathButton = QFileDialog(self)
+        self.downloadPathButton.setFileMode(QFileDialog.FileMode.Directory)
+        self.downloadPathButton.setGeometry(QRect(24, 110, 191, 30))
+
+        self.saveButton = QPushButton("Salvar modificações", self)
+        self.saveButton.setGeometry(QRect(15, 170, 198, 36))
+        self.saveButton.setStyleSheet("font: 20px bold \"Segoe UI\"; border-radius: 10px;")
 
     def showConfigs(self):
         self.show()
