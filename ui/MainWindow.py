@@ -33,6 +33,7 @@ class Ui_MainWindow(object):
         self.configButton = QPushButton(self.centralwidget)
         self.configButton.setObjectName(u"configButton")
         self.configButton.setGeometry(QRect(540, 10, 42, 41))
+        self.configButton.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.listWidget = QListWidget(self.centralwidget)
         self.listWidget.setObjectName(u"listWidget")
         self.listWidget.setGeometry(QRect(10, 60, 571, 435))

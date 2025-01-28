@@ -1,5 +1,6 @@
-from PySide6.QtWidgets import QWidget, QFrame, QComboBox, QPushButton, QLabel, QFileDialog
+from PySide6.QtWidgets import QWidget, QFrame, QComboBox, QPushButton, QLabel, QFileDialog, QMessageBox
 from PySide6.QtCore import Qt, QRect, Signal, Slot
+from pathlib import Path
 
 class DownloadSettings(QWidget):
     def __init__(self):
@@ -33,10 +34,10 @@ class DownloadSettings(QWidget):
         self.qualityBox.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
         self.qualityBox.setStyleSheet("font: 16px \"Segoe UI\";\nborder-radius: 6px;")
 
-        self.pushButton = QPushButton(self)
-        self.pushButton.setText("BAIXAR")
-        self.pushButton.setGeometry(QRect(95, 190, 151, 41))
-        self.pushButton.setStyleSheet("font:24px bold \"Segoe UI\";")
+        self.downloadButton = QPushButton(self)
+        self.downloadButton.setText("BAIXAR")
+        self.downloadButton.setGeometry(QRect(95, 190, 151, 41))
+        self.downloadButton.setStyleSheet("font:24px bold \"Segoe UI\";")
 
     @Slot()
     def updateQualityBox(self, formatType: str):
@@ -71,6 +72,7 @@ class MainSettings(QWidget):
         self.themeSelector.addItem("Claro")
         self.themeSelector.addItem("Escuro")
         self.themeSelector.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.themeSelector.setCursor(Qt.CursorShape.PointingHandCursor)
         self.themeSelector.setCurrentText("Escuro")
         self.themeSelector.setGeometry(QRect(100, 30, 81, 30))
         self.themeSelector.setStyleSheet("font: 18px \"Segoe UI\"; border-radius: 6px")
@@ -80,13 +82,40 @@ class MainSettings(QWidget):
         self.downloadPathLabel.setGeometry(QRect(10, 80, 210, 31))
         self.downloadPathLabel.setStyleSheet("font: 17pt \"Segoe UI\";")
 
-        self.downloadPathButton = QFileDialog(self)
-        self.downloadPathButton.setFileMode(QFileDialog.FileMode.Directory)
-        self.downloadPathButton.setGeometry(QRect(24, 110, 191, 30))
+        self.downloadPathButton = QPushButton("Clique aqui para definir", self)
+        self.downloadPathButton.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.downloadPathButton.setGeometry(QRect(18, 112, 194, 30))
+        self.downloadPathButton.clicked.connect(self.selectPath)
 
         self.saveButton = QPushButton("Salvar modificações", self)
+        self.saveButton.setCursor(Qt.CursorShape.PointingHandCursor)
         self.saveButton.setGeometry(QRect(15, 170, 198, 36))
         self.saveButton.setStyleSheet("font: 20px bold \"Segoe UI\"; border-radius: 10px;")
+        self.setWindowModality(Qt.WindowModality.ApplicationModal)
 
     def showConfigs(self):
         self.show()
+
+    def saveConfigs(self):
+        self.close()
+        # TODO: implementar salvar configs no db
+
+    def selectPath(self):
+        fileDialog = QFileDialog.getExistingDirectory(self, "Selecione o diretório de download")
+
+        if fileDialog == "":
+            return
+        try:
+            self.path = Path(fileDialog)
+        except Exception:
+            QMessageBox.critical(self, "Erro", "Ocorreu um erro ao selecionar o diretório de download.\nTente selecionar outra pasta.", QMessageBox.StandardButton.Ok, QMessageBox.StandardButton.Ok)
+            return
+
+        if len(str(self.path)) > 30:
+            self.downloadPathButton.setText('...' + str(self.path)[-28:])
+            self.downloadPathButton.setStyleSheet('text-align: right;')
+        else:
+            self.downloadPathButton.setText(str(self.path))
+            self.downloadPathButton.setStyleSheet('text-align: auto;')
+        self.downloadPathButton.setToolTip(str(self.path))
+        return fileDialog
