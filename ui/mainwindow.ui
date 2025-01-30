@@ -14,7 +14,7 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLineEdit" name="lineEdit">
+   <widget class="QLineEdit" name="searchBar">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -26,8 +26,11 @@
     <property name="frame">
      <bool>true</bool>
     </property>
+    <property name="placeholderText">
+     <string>Insira o link ou nome do vídeo para pesquisar.</string>
+    </property>
    </widget>
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="configButton">
     <property name="geometry">
      <rect>
       <x>540</x>
@@ -46,135 +49,21 @@
       <x>10</x>
       <y>60</y>
       <width>571</width>
-      <height>441</height>
+      <height>435</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">border: none;
-font-size: 22px;
-QListWidget {
-    border: 1px solid #D3D3D3;
-    border-radius: 5px;
-}
-
-QScrollBar:vertical {
-    border: none;
-    background: #F0F0F0;
-    width: 12px;
-    margin: 0px 0px 0px 0px;
-}
-
-QScrollBar::handle:vertical {
-    background: #888;
-    border-radius: 6px;
-}
-
-QScrollBar::handle:vertical:hover {
-    background: #555;
-}
-
-QScrollBar::add-line:vertical {
-    border: none;
-    background: #F0F0F0;
-    height: 0px;
-}
-
-QScrollBar::sub-line:vertical {
-    border: none;
-    background: #F0F0F0;
-    height: 0px;
-}</string>
+     <string notr="true"/>
     </property>
-    <item>
-     <property name="text">
-      <string>fgadfda</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>gfda</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>gadf</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>gdaf</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>gafd</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>jhgra</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>jgare</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>ea</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>heafg</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>gea</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>hgea</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>hgea</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>hgea</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>hgae</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>gea</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>hgea</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>gfda</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>gafd</string>
-     </property>
-    </item>
+    <property name="verticalScrollBarPolicy">
+     <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOn</enum>
+    </property>
+    <property name="autoScroll">
+     <bool>false</bool>
+    </property>
+    <property name="tabKeyNavigation">
+     <bool>true</bool>
+    </property>
    </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
