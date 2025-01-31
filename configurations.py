@@ -1,11 +1,14 @@
-from PySide6.QtWidgets import QWidget, QFrame, QComboBox, QPushButton, QLabel, QFileDialog, QMessageBox
+from PySide6.QtWidgets import QWidget, QFrame, QComboBox, QPushButton, QLabel, QFileDialog, QMessageBox, QHBoxLayout, QVBoxLayout
 from PySide6.QtCore import Qt, QRect, Signal, Slot
 from pathlib import Path
 
 class DownloadSettings(QWidget):
-    def __init__(self):
+    def __init__(self, videoInfos: tuple):
         super().__init__()
-        self.video = ''  # TODO: passar informações do vídeo para mostrar no qframe
+        self.title = videoInfos[0]
+        self.channel = videoInfos[1]
+        self.duration = videoInfos[2]
+        self.url = videoInfos[4]
         self.mp4Types = ["1080p", "720p", "480p", "360p"]
         self.mp3Types = ["320kbps", "256kbps", "192kbps", "128kbps"]
 
@@ -14,29 +17,54 @@ class DownloadSettings(QWidget):
 
     def setupUI(self):
         self.setWindowTitle("Configurações de Download")
-        self.setFixedSize(340, 280)
+        self.setFixedSize(360, 280)
 
-        self.videoInfo = QFrame(self)
-        self.videoInfo.setGeometry(QRect(10, 10, 321, 61))
-        self.videoInfo.setFrameShape(QFrame.Shape.Box)
+        videoInfo = QFrame(self)
+        videoInfo.setGeometry(QRect(5, 10, 350, 61))
+        videoInfo.setFrameShape(QFrame.Shape.Box)
+
+        frameLyt = QHBoxLayout(videoInfo)
+        frameLyt.setContentsMargins(5, 5, 3, 5)
+        self.thumbLabel = QLabel()
+        self.thumbLabel.setGeometry(QRect(3, 3, 90, 54))
+        frameLyt.addWidget(self.thumbLabel)
+
+        infosLyt = QVBoxLayout()
+        frameLyt.addLayout(infosLyt)
+
+        title = QLabel(f'{self.title[:31]}...' if len(self.title) > 33 else self.title)
+        title.setMinimumWidth(260)
+        title.setToolTip(self.title)
+        title.setStyleSheet("font: 14px")
+        infosLyt.addWidget(title)
+
+        if self.duration >= 3600:
+            durationtxt = f'Duração: {self.duration // 3600:02d}:{(self.duration % 3600) // 60:02d}:{self.duration % 60:02d}'
+        else:
+            durationtxt = f'Duração: {self.duration // 60:02d}:{self.duration % 60:02d}'
+
+        infos = QLabel(f"Canal: {self.channel} • Duração: {durationtxt}")
+        infos.setContentsMargins(0, 0, 0, 5)
+        infos.setStyleSheet("font: 12px; color: gray")
+        infosLyt.addWidget(infos)
 
         self.fileFormatBox = QComboBox(self)
         self.fileFormatBox.addItem(".mp4 (Video)")
         self.fileFormatBox.addItem(".mp3 (Audio)")
-        self.fileFormatBox.setGeometry(QRect(20, 120, 141, 31))
+        self.fileFormatBox.setGeometry(QRect(29, 120, 141, 31))
         self.fileFormatBox.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.fileFormatBox.setStyleSheet("font: 16px \"Segoe UI\";\nborder-radius: 6px;")
 
         self.qualityBox = QComboBox(self)
         self.qualityBox.addItems(self.mp4Types)
-        self.qualityBox.setGeometry(QRect(180, 120, 141, 31))
+        self.qualityBox.setGeometry(QRect(190, 120, 141, 31))
         self.qualityBox.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.qualityBox.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
         self.qualityBox.setStyleSheet("font: 16px \"Segoe UI\";\nborder-radius: 6px;")
 
         self.downloadButton = QPushButton(self)
         self.downloadButton.setText("BAIXAR")
-        self.downloadButton.setGeometry(QRect(95, 190, 151, 41))
+        self.downloadButton.setGeometry(QRect(104, 190, 152, 41))
         self.downloadButton.setStyleSheet("font:24px bold \"Segoe UI\";")
 
     @Slot()
