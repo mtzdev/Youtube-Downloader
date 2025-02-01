@@ -1,23 +1,28 @@
-from PySide6.QtWidgets import QWidget, QFrame, QComboBox, QPushButton, QLabel, QFileDialog, QMessageBox, QHBoxLayout, QVBoxLayout
+from PySide6.QtWidgets import QWidget, QFrame, QComboBox, QPushButton, QLabel, QFileDialog, QMessageBox, QHBoxLayout, QVBoxLayout, QProgressBar
 from PySide6.QtCore import Qt, QRect, Signal, Slot
 from pathlib import Path
+from search import DownloadVideoThread
+from os import path
 
 class DownloadSettings(QWidget):
-    def __init__(self, videoInfos: tuple):
+    def __init__(self, videoInfos: tuple, mainConfigs):
         super().__init__()
         self.title = videoInfos[0]
         self.channel = videoInfos[1]
         self.duration = videoInfos[2]
         self.url = videoInfos[4]
-        self.mp4Types = ["1080p", "720p", "480p", "360p"]
-        self.mp3Types = ["320kbps", "256kbps", "192kbps", "128kbps"]
+        self.config = mainConfigs
+        self.mp4Types = ["1080p", "720p", "480p", "360p", "240p"]
+        self.mp3Types = ["320kbps", "256kbps", "192kbps", "128kbps", "96kbps"]
 
         self.setupUI()
         self.fileFormatBox.currentTextChanged.connect(lambda formatType: self.updateQualityBox(formatType))
 
     def setupUI(self):
         self.setWindowTitle("Configurações de Download")
-        self.setFixedSize(360, 280)
+        self.setFixedSize(360, 230)
+        self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint, True)
+        self.setWindowModality(Qt.WindowModality.ApplicationModal)
 
         videoInfo = QFrame(self)
         videoInfo.setGeometry(QRect(5, 10, 350, 61))
@@ -32,16 +37,16 @@ class DownloadSettings(QWidget):
         infosLyt = QVBoxLayout()
         frameLyt.addLayout(infosLyt)
 
-        title = QLabel(f'{self.title[:31]}...' if len(self.title) > 33 else self.title)
-        title.setMinimumWidth(260)
+        title = QLabel(f'{self.title[:33]}...' if len(self.title) > 33 else self.title)
+        title.setMinimumWidth(240)
         title.setToolTip(self.title)
         title.setStyleSheet("font: 14px")
         infosLyt.addWidget(title)
 
         if self.duration >= 3600:
-            durationtxt = f'Duração: {self.duration // 3600:02d}:{(self.duration % 3600) // 60:02d}:{self.duration % 60:02d}'
+            durationtxt = f'{self.duration // 3600:02d}:{(self.duration % 3600) // 60:02d}:{self.duration % 60:02d}'
         else:
-            durationtxt = f'Duração: {self.duration // 60:02d}:{self.duration % 60:02d}'
+            durationtxt = f'{self.duration // 60:02d}:{self.duration % 60:02d}'
 
         infos = QLabel(f"Canal: {self.channel} • Duração: {durationtxt}")
         infos.setContentsMargins(0, 0, 0, 5)
@@ -49,32 +54,71 @@ class DownloadSettings(QWidget):
         infosLyt.addWidget(infos)
 
         self.fileFormatBox = QComboBox(self)
-        self.fileFormatBox.addItem(".mp4 (Video)")
-        self.fileFormatBox.addItem(".mp3 (Audio)")
-        self.fileFormatBox.setGeometry(QRect(29, 120, 141, 31))
+        self.fileFormatBox.addItem(".mp4 (Vídeo)")
+        self.fileFormatBox.addItem(".mp3 (Áudio)")
+        self.fileFormatBox.setGeometry(QRect(29, 90, 141, 31))
         self.fileFormatBox.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.fileFormatBox.setStyleSheet("font: 16px \"Segoe UI\";\nborder-radius: 6px;")
 
         self.qualityBox = QComboBox(self)
         self.qualityBox.addItems(self.mp4Types)
-        self.qualityBox.setGeometry(QRect(190, 120, 141, 31))
+        self.qualityBox.setGeometry(QRect(190, 90, 141, 31))
         self.qualityBox.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.qualityBox.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
         self.qualityBox.setStyleSheet("font: 16px \"Segoe UI\";\nborder-radius: 6px;")
 
         self.downloadButton = QPushButton(self)
         self.downloadButton.setText("BAIXAR")
-        self.downloadButton.setGeometry(QRect(104, 190, 152, 41))
+        self.downloadButton.setGeometry(QRect(104, 145, 152, 41))
         self.downloadButton.setStyleSheet("font:24px bold \"Segoe UI\";")
+        self.downloadButton.clicked.connect(self.downloadClicked)
+
+        self.progress = QProgressBar(self)
+        self.progress.setGeometry(QRect(60, 210, 241, 25))
+        self.progress.setValue(0)
+        self.progress.setHidden(True)
+
+        self.downloadPath = QLabel('Pasta de Download: NÃO DEFINIDO!', self)
+        if self.config.path is not None:
+            self.downloadPath.setText(f"Pasta de Download: {self.config.path}")
+            self.downloadPath.setToolTip(str(self.config.path))
+
+        self.downloadPath.setGeometry(QRect(1, 210, 360, 16))
+        self.downloadPath.setStyleSheet("font: 13px;")
 
     @Slot()
     def updateQualityBox(self, formatType: str):
         formats = {
-            ".mp4 (Video)": self.mp4Types,
-            ".mp3 (Audio)": self.mp3Types
+            ".mp4 (Vídeo)": self.mp4Types,
+            ".mp3 (Áudio)": self.mp3Types
         }
         self.qualityBox.clear()
         self.qualityBox.addItems(formats[formatType])
+
+    def downloadClicked(self):
+        formatSelected, qualitySelected = self.fileFormatBox.currentText(), self.qualityBox.currentText()
+        if self.config.path is None or not path.exists(self.config.path):
+            QMessageBox.critical(self, "Pasta inválida", "<span style='font-size: 14px'><b>Selecione uma pasta para download válida antes de baixar.</b></span><br><span style='font-size: 13px'>Para selecionar, clique no botão de configurações na página principal e escolha uma pasta.", QMessageBox.StandardButton.Ok, QMessageBox.StandardButton.Ok)
+            return None
+
+        self.downloadButton.setDisabled(True)
+        self.qualityBox.setDisabled(True)
+        self.fileFormatBox.setDisabled(True)
+        self.progress.setHidden(False)
+        self.setFixedSize(360, 280)
+        self.downloadPath.setGeometry(QRect(1, 260, 360, 16))
+
+        if formatSelected == ".mp4 (Vídeo)":
+            self.downloadThread = DownloadVideoThread(self.url, str(self.config.path), qualitySelected[:-1], 'mp4')
+        else:
+            self.downloadThread = DownloadVideoThread(self.url, str(self.config.path), qualitySelected[:-4], 'mp3', audioOnly=True)
+
+        self.downloadThread.finishedDownload.connect(lambda: QMessageBox.information(self, "Download concluído!", f"<span style='font-size: 16px'><b>Download concluído com sucesso!</b><br>Vídeo baixado: {self.title}</span>", QMessageBox.StandardButton.Ok))
+        self.downloadThread.finishedDownload.connect(self.downloadThread.deleteLater)
+        self.downloadThread.finishedDownload.connect(self.close)
+        self.downloadThread.error.connect(lambda error: QMessageBox.critical(self, "Erro detectado!", f"Ocorreu um erro ao baixar o vídeo.\nErro: {error}", QMessageBox.StandardButton.Ok, QMessageBox.StandardButton.Ok))
+        self.downloadThread.progress.connect(lambda value: self.progress.setValue(value))
+        self.downloadThread.start()
 
     def showConfigs(self):
         self.show()
@@ -106,7 +150,7 @@ class MainSettings(QWidget):
         self.themeSelector.setStyleSheet("font: 18px \"Segoe UI\"; border-radius: 6px")
         self.themeSelector.currentTextChanged.connect(self.themeChanged.emit)
 
-        self.downloadPathLabel = QLabel("Local de Download:", self)  # TODO: implementar botão e logica para definir local de download
+        self.downloadPathLabel = QLabel("Local de Download:", self)
         self.downloadPathLabel.setGeometry(QRect(10, 80, 210, 31))
         self.downloadPathLabel.setStyleSheet("font: 17pt \"Segoe UI\";")
 

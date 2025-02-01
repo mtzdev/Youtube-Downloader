@@ -49,7 +49,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def startSearch(self):
         query = self.searchBar.text()
-        if query == '':
+        if query.strip() == '':
             return
 
         self.searchBar.setDisabled(True)
@@ -138,6 +138,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def listWidget_itemClicked(self, item: QListWidgetItem):
         video = self.listWidget.itemWidget(item).property('infos')
 
-        download = DownloadSettings(video)
+        download = DownloadSettings(video, self.configs)
         self.load_thumbnail(video[3], download.thumbLabel, 90, 54)
         download.showConfigs()
