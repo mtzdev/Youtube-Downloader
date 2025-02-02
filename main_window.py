@@ -4,7 +4,6 @@ from PySide6.QtCore import Qt, QSize, QUrl, QByteArray
 from PySide6.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkReply
 from configurations import MainSettings, DownloadSettings
 from search import getVideosThread
-import re
 
 from ui.MainWindow import Ui_MainWindow
 
@@ -54,15 +53,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.searchBar.setDisabled(True)
 
-        if re.match(r'^https://www.youtube.com/watch\?v=[a-zA-Z0-9_-]{11}$', query):
-            # TODO: baixar video direto caso seja um link
-            return
-
         self.listWidget.clear()
         self.loadingLabel.show()
         self.loadingGif.start()
 
-        self.search_thread = getVideosThread(query)
+        self.search_thread = getVideosThread(query, self.configs.searchLimit.value())
         self.search_thread.finishedSearch.connect(self.processVideoResults)
         self.search_thread.finishedSearch.connect(self.unlockSearch)
         self.search_thread.finishedSearch.connect(self.search_thread.deleteLater)

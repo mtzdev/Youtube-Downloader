@@ -4,15 +4,15 @@ from yt_dlp import YoutubeDL
 class getVideosThread(QThread):
     finishedSearch = Signal(list)
 
-    def __init__(self, query: str):
+    def __init__(self, query: str, amount: int = 12):
         super().__init__()
         self.query = query
-        self.amount = 16  # hard coded por enquanto, depois obter quantia das configurações
+        self.amount = amount
 
     def run(self):
         ydl_opts = {'quiet': True, 'extract_flat': True, 'noplaylist': True}
         with YoutubeDL(ydl_opts) as ytdl:
-            info: dict = ytdl.extract_info(f'ytsearch16:{self.query}', download=False)  # type: ignore
+            info: dict = ytdl.extract_info(f'ytsearch{self.amount}:{self.query}', download=False)  # type: ignore
 
         res = []
         if 'entries' in info:

@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QWidget, QFrame, QComboBox, QPushButton, QLabel, QFileDialog, QMessageBox, QHBoxLayout, QVBoxLayout, QProgressBar
+from PySide6.QtWidgets import QWidget, QFrame, QComboBox, QPushButton, QLabel, QFileDialog, QMessageBox, QHBoxLayout, QVBoxLayout, QProgressBar, QSpinBox
 from PySide6.QtCore import Qt, QRect, Signal, Slot
 from pathlib import Path
 from search import DownloadVideoThread
@@ -21,7 +21,6 @@ class DownloadSettings(QWidget):
     def setupUI(self):
         self.setWindowTitle("Configurações de Download")
         self.setFixedSize(360, 230)
-        self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint, True)
         self.setWindowModality(Qt.WindowModality.ApplicationModal)
 
         videoInfo = QFrame(self)
@@ -37,7 +36,7 @@ class DownloadSettings(QWidget):
         infosLyt = QVBoxLayout()
         frameLyt.addLayout(infosLyt)
 
-        title = QLabel(f'{self.title[:33]}...' if len(self.title) > 33 else self.title)
+        title = QLabel(f'{self.title[:34]}...' if len(self.title) > 34 else self.title)
         title.setMinimumWidth(240)
         title.setToolTip(self.title)
         title.setStyleSheet("font: 14px")
@@ -78,13 +77,16 @@ class DownloadSettings(QWidget):
         self.progress.setValue(0)
         self.progress.setHidden(True)
 
-        self.downloadPath = QLabel('Pasta de Download: NÃO DEFINIDO!', self)
+        self.downloadPath = QPushButton('Pasta de Download: NÃO DEFINIDO! (clique aqui para definir)', self)
         if self.config.path is not None:
             self.downloadPath.setText(f"Pasta de Download: {self.config.path}")
             self.downloadPath.setToolTip(str(self.config.path))
 
-        self.downloadPath.setGeometry(QRect(1, 210, 360, 16))
-        self.downloadPath.setStyleSheet("font: 13px;")
+        self.downloadPath.setGeometry(QRect(1, 205, 360, 10))
+        self.downloadPath.adjustSize()
+        self.downloadPath.setStyleSheet("font: 12px; padding-left: 2px; border: none; text-align: left;")
+        self.downloadPath.clicked.connect(self.config.selectPath)
+        self.config.pathChanged.connect(lambda path: self.downloadPath.setText(f'Pasta de Download: {path}'))
 
     @Slot()
     def updateQualityBox(self, formatType: str):
@@ -98,20 +100,23 @@ class DownloadSettings(QWidget):
     def downloadClicked(self):
         formatSelected, qualitySelected = self.fileFormatBox.currentText(), self.qualityBox.currentText()
         if self.config.path is None or not path.exists(self.config.path):
-            QMessageBox.critical(self, "Pasta inválida", "<span style='font-size: 14px'><b>Selecione uma pasta para download válida antes de baixar.</b></span><br><span style='font-size: 13px'>Para selecionar, clique no botão de configurações na página principal e escolha uma pasta.", QMessageBox.StandardButton.Ok, QMessageBox.StandardButton.Ok)
+            QMessageBox.critical(self, "Pasta inválida", "<span style='font-size: 14px'><b>Selecione uma pasta de download válida antes de baixar.</b></span><br>"
+                "<span style='font-size: 13px'>Clique no texto abaixo do botão \"Baixar\" para escolher a pasta de download.", QMessageBox.StandardButton.Ok, QMessageBox.StandardButton.Ok)
             return None
-
-        self.downloadButton.setDisabled(True)
-        self.qualityBox.setDisabled(True)
-        self.fileFormatBox.setDisabled(True)
-        self.progress.setHidden(False)
-        self.setFixedSize(360, 280)
-        self.downloadPath.setGeometry(QRect(1, 260, 360, 16))
 
         if formatSelected == ".mp4 (Vídeo)":
             self.downloadThread = DownloadVideoThread(self.url, str(self.config.path), qualitySelected[:-1], 'mp4')
         else:
             self.downloadThread = DownloadVideoThread(self.url, str(self.config.path), qualitySelected[:-4], 'mp3', audioOnly=True)
+
+        self.downloadButton.setDisabled(True)
+        self.qualityBox.setDisabled(True)
+        self.fileFormatBox.setDisabled(True)
+        self.downloadPath.setDisabled(True)
+        self.progress.setHidden(False)
+        self.setFixedSize(360, 280)
+        self.downloadPath.setGeometry(QRect(1, 255, 360, 10))
+        self.downloadPath.adjustSize()
 
         self.downloadThread.finishedDownload.connect(lambda: QMessageBox.information(self, "Download concluído!", f"<span style='font-size: 16px'><b>Download concluído com sucesso!</b><br>Vídeo baixado: {self.title}</span>", QMessageBox.StandardButton.Ok))
         self.downloadThread.finishedDownload.connect(self.downloadThread.deleteLater)
@@ -125,6 +130,7 @@ class DownloadSettings(QWidget):
 
 class MainSettings(QWidget):
     themeChanged = Signal(str)
+    pathChanged = Signal(str)
 
     def __init__(self):
         super().__init__()
@@ -134,11 +140,12 @@ class MainSettings(QWidget):
 
     def setupUI(self):
         self.setWindowTitle("Configurações")
-        self.setFixedSize(229, 238)
+        self.setFixedSize(350, 220)
+        self.setWindowModality(Qt.WindowModality.ApplicationModal)
 
         self.themeLabel = QLabel('Tema:', self)
-        self.themeLabel.setGeometry(QRect(20, 30, 70, 32))
-        self.themeLabel.setStyleSheet("font: 18pt \"Segoe UI\";")
+        self.themeLabel.setGeometry(QRect(3, 20, 70, 25))
+        self.themeLabel.setStyleSheet("font: 19px")
 
         self.themeSelector = QComboBox(self)
         self.themeSelector.addItem("Claro")
@@ -146,24 +153,37 @@ class MainSettings(QWidget):
         self.themeSelector.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.themeSelector.setCursor(Qt.CursorShape.PointingHandCursor)
         self.themeSelector.setCurrentText("Escuro")
-        self.themeSelector.setGeometry(QRect(100, 30, 81, 30))
-        self.themeSelector.setStyleSheet("font: 18px \"Segoe UI\"; border-radius: 6px")
+        self.themeSelector.setGeometry(QRect(65, 18, 80, 20))
+        self.themeSelector.setStyleSheet("font: 16px; border-radius: 6px")
         self.themeSelector.currentTextChanged.connect(self.themeChanged.emit)
 
+        self.searchLimitLabel = QLabel("Limite de resultados:", self)
+        self.searchLimitLabel.setGeometry(QRect(3, 70, 180, 25))
+        self.searchLimitLabel.setStyleSheet("font: 19px;")
+
+        self.searchLimit = QSpinBox(self)
+        self.searchLimit.setGeometry(QRect(192, 70, 60, 25))
+        self.searchLimit.setToolTip('Quanto maior a quantidade de resultados, mais lenta será a pesquisa.')
+        self.searchLimit.setStyleSheet("font: 16px; border-radius: 6px;")
+        self.searchLimit.setFocusPolicy(Qt.FocusPolicy.ClickFocus)
+        self.searchLimit.setMinimum(4)
+        self.searchLimit.setMaximum(50)
+        self.searchLimit.setValue(12)
+
         self.downloadPathLabel = QLabel("Local de Download:", self)
-        self.downloadPathLabel.setGeometry(QRect(10, 80, 210, 31))
-        self.downloadPathLabel.setStyleSheet("font: 17pt \"Segoe UI\";")
+        self.downloadPathLabel.setGeometry(QRect(3, 120, 170, 25))
+        self.downloadPathLabel.setStyleSheet("font: 19px;")
 
         self.downloadPathButton = QPushButton("Clique aqui para definir", self)
         self.downloadPathButton.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.downloadPathButton.setGeometry(QRect(18, 112, 194, 30))
+        self.downloadPathButton.setGeometry(QRect(182, 120, 160, 30))
         self.downloadPathButton.clicked.connect(self.selectPath)
 
         self.saveButton = QPushButton("Salvar modificações", self)
         self.saveButton.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.saveButton.setGeometry(QRect(15, 170, 198, 36))
-        self.saveButton.setStyleSheet("font: 20px bold \"Segoe UI\"; border-radius: 10px;")
-        self.setWindowModality(Qt.WindowModality.ApplicationModal)
+        self.saveButton.setGeometry(QRect(80, 165, 190, 35))
+        self.saveButton.setStyleSheet("font: 19px bold \"Segoe UI\"; border-radius: 10px")
+        self.saveButton.clicked.connect(self.saveConfigs)
 
     def showConfigs(self):
         self.show()
@@ -173,7 +193,7 @@ class MainSettings(QWidget):
         # TODO: implementar salvar configs no db
 
     def selectPath(self):
-        fileDialog = QFileDialog.getExistingDirectory(self, "Selecione o diretório de download")
+        fileDialog = QFileDialog.getExistingDirectory(self, "Selecione o diretório para download")
 
         if fileDialog == "":
             return
@@ -190,4 +210,5 @@ class MainSettings(QWidget):
             self.downloadPathButton.setText(str(self.path))
             self.downloadPathButton.setStyleSheet('text-align: auto;')
         self.downloadPathButton.setToolTip(str(self.path))
+        self.pathChanged.emit(str(self.path))
         return fileDialog
