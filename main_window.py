@@ -1,9 +1,10 @@
-from PySide6.QtWidgets import QMainWindow, QWidget, QHBoxLayout, QVBoxLayout, QLabel, QListWidgetItem
+from PySide6.QtWidgets import QMainWindow, QWidget, QHBoxLayout, QVBoxLayout, QLabel, QListWidgetItem, QMessageBox
 from PySide6.QtGui import QIcon, QPixmap, QMovie
 from PySide6.QtCore import Qt, QSize, QUrl, QByteArray
 from PySide6.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkReply
 from configurations import MainSettings, DownloadSettings
 from search import getVideosThread
+import re
 
 from ui.MainWindow import Ui_MainWindow
 
@@ -50,6 +51,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         query = self.searchBar.text()
         if query.strip() == '':
             return
+
+        if bool(re.match(r"^(https?:\/\/)?(www\.)?(youtu\.be\/|youtube\.com\/)", query)):  # links do yt
+            match = re.search(r"(?:youtu\.be/|youtube\.com/(?:watch\?v=|embed/|v/|shorts/|live/))([^?&]+)", query)
+            if match:
+                query = match.group(1)
+            else:
+                QMessageBox.information(self, "Link não suportado", "O link inserido é inválido ou não suportado pelo aplicativo.<br>Lembre-se que suportamos apenas links de vídeos do YouTube (não suportamos playlists).")
+                return
 
         self.searchBar.setDisabled(True)
 

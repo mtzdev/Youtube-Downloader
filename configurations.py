@@ -3,6 +3,7 @@ from PySide6.QtCore import Qt, QRect, Signal, Slot
 from pathlib import Path
 from search import DownloadVideoThread
 from os import path
+from utils import Settings
 
 class DownloadSettings(QWidget):
     def __init__(self, videoInfos: tuple, mainConfigs):
@@ -135,6 +136,7 @@ class MainSettings(QWidget):
     def __init__(self):
         super().__init__()
         self.path = None
+        self.settings = Settings()
 
         self.setupUI()
 
@@ -152,7 +154,7 @@ class MainSettings(QWidget):
         self.themeSelector.addItem("Escuro")
         self.themeSelector.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.themeSelector.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.themeSelector.setCurrentText("Escuro")
+        self.themeSelector.setCurrentText("Escuro" if self.settings.theme == 'dark' else "Claro")
         self.themeSelector.setGeometry(QRect(65, 18, 80, 20))
         self.themeSelector.setStyleSheet("font: 16px; border-radius: 6px")
         self.themeSelector.currentTextChanged.connect(self.themeChanged.emit)
@@ -168,13 +170,28 @@ class MainSettings(QWidget):
         self.searchLimit.setFocusPolicy(Qt.FocusPolicy.ClickFocus)
         self.searchLimit.setMinimum(4)
         self.searchLimit.setMaximum(50)
-        self.searchLimit.setValue(12)
+        self.searchLimit.setValue(self.settings.searchlimit)
 
         self.downloadPathLabel = QLabel("Local de Download:", self)
         self.downloadPathLabel.setGeometry(QRect(3, 120, 170, 25))
         self.downloadPathLabel.setStyleSheet("font: 19px;")
 
         self.downloadPathButton = QPushButton("Clique aqui para definir", self)
+
+        if self.settings.outputpath is not None:  # Caso já exista um caminho salvo nas configs, verifica se é válido e carrega
+            try:
+                self.path = Path(self.settings.outputpath)
+            except Exception:
+                pass
+            else:
+                if len(self.settings.outputpath) > 30:
+                    self.downloadPathButton.setText('...' + self.settings.outputpath[-28:])
+                    self.downloadPathButton.setStyleSheet('text-align: right;')
+                else:
+                    self.downloadPathButton.setText(self.settings.outputpath)
+                    self.downloadPathButton.setStyleSheet('text-align: auto;')
+                self.downloadPathButton.setToolTip(self.settings.outputpath)
+
         self.downloadPathButton.setCursor(Qt.CursorShape.PointingHandCursor)
         self.downloadPathButton.setGeometry(QRect(182, 120, 160, 30))
         self.downloadPathButton.clicked.connect(self.selectPath)
@@ -189,8 +206,11 @@ class MainSettings(QWidget):
         self.show()
 
     def saveConfigs(self):
+        self.settings.theme = self.themeSelector.currentText().lower()
+        self.settings.searchlimit = self.searchLimit.value()
+        self.settings.outputpath = str(self.path)
+
         self.close()
-        # TODO: implementar salvar configs no db
 
     def selectPath(self):
         fileDialog = QFileDialog.getExistingDirectory(self, "Selecione o diretório para download")
