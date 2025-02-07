@@ -5,6 +5,7 @@ from PySide6.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkRe
 from configurations import MainSettings, DownloadSettings
 from search import getVideosThread
 import re
+from utils import get_resource
 
 from ui.MainWindow import Ui_MainWindow
 
@@ -15,17 +16,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setWindowTitle("Youtube Downloader")
         self.setFixedSize(self.width(), self.height())
         self.networkManager = QNetworkAccessManager()
+        self.statusbar.showMessage("Version 1.0 - by mtzdev")
 
-        self.loadingGif = QMovie("data/loading.gif")
+        self.loadingGif = QMovie(get_resource("data/loading.gif"))
         self.loadingLabel.setMovie(self.loadingGif)
         self.listWidget.itemClicked.connect(self.listWidget_itemClicked)
 
-        self.searchButton = self.searchBar.addAction(QIcon("data/search_dark.svg"), self.searchBar.ActionPosition.LeadingPosition)
+        self.searchButton = self.searchBar.addAction(QIcon(get_resource("data/search_dark.svg")), self.searchBar.ActionPosition.LeadingPosition)
         self.searchBar.setStyleSheet("border-radius: 6px; font-size: 15px")
         self.searchBar.returnPressed.connect(self.startSearch)
 
         self.configs = MainSettings()
-        self.configButton.setIcon(QIcon("data/config_dark.svg"))
+        self.configButton.setIcon(QIcon(get_resource("data/config_dark.svg")))
         self.configButton.setIconSize(QSize(22, 22))
         self.configButton.setToolTip("Configurações")
         self.configButton.clicked.connect(self.configs.showConfigs)
@@ -34,15 +36,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def changeIconTheme(self, theme):
         if theme == 'Claro':
-            self.searchButton.setIcon(QIcon("data/search_light.svg"))
-            self.configButton.setIcon(QIcon("data/config_light.svg"))
+            self.searchButton.setIcon(QIcon(get_resource("data/search_light.svg")))
+            self.configButton.setIcon(QIcon(get_resource("data/config_light.svg")))
             self.searchBar.setStyleSheet("border-color: #898989; border-radius: 6px; font-size: 15px; color: #000000")
             self.configButton.setStyleSheet("border-color: #898989;")
             self.listWidget.setStyleSheet("border-color: #898989")
 
         if theme == 'Escuro':
-            self.searchButton.setIcon(QIcon("data/search_dark.svg"))
-            self.configButton.setIcon(QIcon("data/config_dark.svg"))
+            self.searchButton.setIcon(QIcon(get_resource("data/search_dark.svg")))
+            self.configButton.setIcon(QIcon(get_resource("data/config_dark.svg")))
             self.searchBar.setStyleSheet("border-radius: 6px; font-size: 15px")
             self.configButton.setStyleSheet("")
             self.listWidget.setStyleSheet("")

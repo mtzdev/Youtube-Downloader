@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'mainwindowupibPc.ui'
+## Form generated from reading UI file 'mainwindowuYUjSQ.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.8.1
 ##
@@ -32,8 +32,7 @@ class Ui_MainWindow(object):
         self.searchBar.setFrame(True)
         self.configButton = QPushButton(self.centralwidget)
         self.configButton.setObjectName(u"configButton")
-        self.configButton.setGeometry(QRect(540, 10, 42, 41))
-        self.configButton.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        self.configButton.setGeometry(QRect(538, 10, 42, 41))
         self.listWidget = QListWidget(self.centralwidget)
         self.listWidget.setObjectName(u"listWidget")
         self.listWidget.setGeometry(QRect(10, 60, 571, 435))

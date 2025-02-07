@@ -1,11 +1,13 @@
 from PySide6.QtCore import QSettings
+from os import path
+import sys
 
 class Settings:
     def __init__(self):
         self.settings = QSettings("YtDownloader-mtzdev", "Configurations")
 
     def setupSettings(self):
-        self.settings.setValue('Default', 'Beta')
+        self.settings.setValue('Default', '1.0')
 
         default_settings = {
             'Theme': 'dark',
@@ -68,3 +70,12 @@ class Settings:
     @language.setter
     def language(self, lang: str):
         self.settings.setValue('language', lang)
+
+
+def get_resource(file):
+    if hasattr(sys, '_MEIPASS'):
+        base_path = sys._MEIPASS
+    else:
+        base_path = path.abspath(".")
+
+    return path.join(base_path, file)
