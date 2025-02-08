@@ -17,14 +17,15 @@ class getVideosThread(QThread):
         res = []
         if 'entries' in info:
             for video in info['entries']:
-                if video['duration']:  # evita lives
-                    res.append({
-                        'title': video['title'],
-                        'duration': video['duration'],
-                        'channel': video['channel'],
-                        'thumbnail': video['thumbnails'][0]['url'],
-                        'link': video['url']
-                    })
+                if video['ie_key'] == 'Youtube':  # fix: evita infos que não são videos
+                    if video['duration']:  # evita lives
+                        res.append({
+                            'title': video['title'],
+                            'duration': video['duration'],
+                            'channel': video['channel'],
+                            'thumbnail': video['thumbnails'][0]['url'],
+                            'link': video['url']
+                        })
 
         self.finishedSearch.emit(res)
         self.quit()
