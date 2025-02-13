@@ -1,6 +1,5 @@
 from PySide6.QtCore import QSettings
 from os import path
-import sys
 
 class Settings:
     def __init__(self):
@@ -73,8 +72,8 @@ class Settings:
 
 
 def get_resource(file):
-    if hasattr(sys, '_MEIPASS'):
-        base_path = sys._MEIPASS
+    if "__compiled__" in globals():
+        base_path = path.dirname(__file__)
     else:
         base_path = path.abspath(".")
 
