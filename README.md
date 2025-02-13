@@ -1,7 +1,8 @@
 # 🎬 YouTube Video/Audio Downloader
 Baixe vídeos e músicas do YouTube de forma rápida e prática! Este aplicativo permite pesquisar e baixar vídeos em MP4 e músicas em MP3 com diversas opções de qualidade. Interface moderna e prática, suporte a temas claro e escuro, e total controle sobre suas preferências.
 
----
+## 👀 Demonstração do app
+![Demonstração](https://github.com/user-attachments/assets/1dd35e40-78ca-420d-ac76-ca48c988bda4)
 
 ## 🚀 Funcionalidades
 ✅ **Busca integrada** - Pesquise vídeos diretamente pelo aplicativo ou insira o link do YouTube.<br>
@@ -30,7 +31,7 @@ Baixe vídeos e músicas do YouTube de forma rápida e prática! Este aplicativo
 ## 📥 Instalação
 
 ### 🔹 Baixar versão pronta (.exe)
-A versão compilada está disponível na aba **Releases** do GitHub. Basta baixar e executar!
+A versão compilada está disponível na aba **[Releases](https://github.com/mtzdev/Youtube-Downloader/releases)** do GitHub. Basta baixar e executar!
 
 ### 🔹 Compilar manualmente
 Caso queira compilar a aplicação por conta própria:
