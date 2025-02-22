@@ -5,7 +5,7 @@ from PySide6.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkRe
 from configurations import MainSettings, DownloadSettings
 from search import getVideosThread
 import re
-from utils import get_resource
+from utils import get_resource, Translator
 
 from ui.MainWindow import Ui_MainWindow
 
@@ -16,7 +16,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setWindowTitle("Youtube Downloader")
         self.setFixedSize(self.width(), self.height())
         self.networkManager = QNetworkAccessManager()
-        self.statusbar.showMessage("Version 1.0 - by mtzdev")
+        self.statusbar.showMessage("Version 1.2 - by mtzdev")
+        self.i18n = Translator()
 
         self.loadingGif = QMovie(get_resource("data/loading.gif"))
         self.loadingLabel.setMovie(self.loadingGif)
@@ -26,7 +27,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.searchBar.setStyleSheet("border-radius: 6px; font-size: 15px")
         self.searchBar.returnPressed.connect(self.startSearch)
 
-        self.configs = MainSettings()
+        self.configs = MainSettings(self.i18n)
         self.configButton.setIcon(QIcon(get_resource("data/config_dark.svg")))
         self.configButton.setIconSize(QSize(22, 22))
         self.configButton.setToolTip("Configurações")
@@ -35,14 +36,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.configs.themeChanged.connect(self.changeIconTheme)
 
     def changeIconTheme(self, theme):
-        if theme == 'Claro':
+        if theme == 'light':
             self.searchButton.setIcon(QIcon(get_resource("data/search_light.svg")))
             self.configButton.setIcon(QIcon(get_resource("data/config_light.svg")))
             self.searchBar.setStyleSheet("border-color: #898989; border-radius: 6px; font-size: 15px; color: #000000")
             self.configButton.setStyleSheet("border-color: #898989;")
             self.listWidget.setStyleSheet("border-color: #898989")
 
-        if theme == 'Escuro':
+        if theme == 'dark':
             self.searchButton.setIcon(QIcon(get_resource("data/search_dark.svg")))
             self.configButton.setIcon(QIcon(get_resource("data/config_dark.svg")))
             self.searchBar.setStyleSheet("border-radius: 6px; font-size: 15px")
@@ -59,7 +60,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if match:
                 query = match.group(1)
             else:
-                QMessageBox.information(self, "Link não suportado", "O link inserido é inválido ou não suportado pelo aplicativo.<br>Lembre-se que suportamos apenas links de vídeos do YouTube (não suportamos playlists).")
+                QMessageBox.information(self, self.i18n.get("link_not_supported"), self.i18n.get("link_not_supported_desc"), QMessageBox.Ok)
                 return
 
         self.searchBar.setDisabled(True)
@@ -115,14 +116,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         titleLabel = QLabel(title)
         titleLabel.setStyleSheet('font-size: 14px; font-weight: bold; border: 0px;')
 
-        channelLabel = QLabel(f'Canal: {channel}')
+        channelLabel = QLabel(f'{self.i18n.get("channel")} {channel}')
         channelLabel.setStyleSheet('font-size: 12px; color: gray; border: 0px;')
 
         duration = int(duration)
         if duration >= 3600:
-            durationLabel = QLabel(f'Duração: {duration // 3600:02d}:{(duration % 3600) // 60:02d}:{duration % 60:02d}')
+            durationLabel = QLabel(f'{self.i18n.get("duration")}: {duration // 3600:02d}:{(duration % 3600) // 60:02d}:{duration % 60:02d}')
         else:
-            durationLabel = QLabel(f'Duração: {duration // 60:02d}:{duration % 60:02d}')
+            durationLabel = QLabel(f'{self.i18n.get("duration")}: {duration // 60:02d}:{duration % 60:02d}')
 
         durationLabel.setStyleSheet('font-size: 12px; color: gray; border: 0px;')
 
@@ -144,6 +145,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def listWidget_itemClicked(self, item: QListWidgetItem):
         video = self.listWidget.itemWidget(item).property('infos')
 
-        download = DownloadSettings(video, self.configs)
+        download = DownloadSettings(video, self.configs, self.i18n)
         self.load_thumbnail(video[3], download.thumbLabel, 90, 54)
         download.showConfigs()

@@ -5,10 +5,6 @@ from utils import Settings, get_resource
 import qdarktheme
 import sys
 
-THEMES = {
-    'Claro': 'light',
-    'Escuro': 'dark'
-}
 
 def main():
     app = QApplication([])
@@ -23,10 +19,10 @@ def main():
 
     app.setStyleSheet(qdarktheme.load_stylesheet(config.theme))
     if config.theme == 'light':  # mudar para light, pois por default ele já carrega dark
-        window.changeIconTheme('Claro')
+        window.changeIconTheme('light')
 
     window.setWindowIcon(QIcon(get_resource("data/logo.ico")))
-    window.configs.themeChanged.connect(lambda theme: app.setStyleSheet(qdarktheme.load_stylesheet(THEMES[theme])))
+    window.configs.themeChanged.connect(lambda theme: app.setStyleSheet(qdarktheme.load_stylesheet(theme)))
 
     window.show()
     app.exec()

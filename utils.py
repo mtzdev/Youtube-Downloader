@@ -1,18 +1,19 @@
 from PySide6.QtCore import QSettings
 from os import path
+import json
 
 class Settings:
     def __init__(self):
         self.settings = QSettings("YtDownloader-mtzdev", "Configurations")
 
     def setupSettings(self):
-        self.settings.setValue('Default', '1.0')
+        self.settings.setValue('Default', '1.2')
 
         default_settings = {
             'Theme': 'dark',
             'SearchLimit': 12,
             'OutputPath': '',
-            'language': 'pt-br'
+            'language': 'pt_br'
         }
         for k, v in default_settings.items():
             if not self.settings.contains(k):
@@ -64,7 +65,7 @@ class Settings:
 
     @property
     def language(self):
-        return self.settings.value('language', 'en')
+        return self.settings.value('language', 'pt_br')
 
     @language.setter
     def language(self, lang: str):
@@ -78,3 +79,24 @@ def get_resource(file):
         base_path = path.abspath(".")
 
     return path.join(base_path, file)
+
+
+class Translator:
+    def __init__(self):
+        self.lang = self.__get_language()
+        self.translations = self.__load()
+
+    def __get_language(self):
+        lang = Settings().language
+        return lang or 'en'
+
+    def __load(self):
+        try:
+            with open(get_resource(f'./i18n/{self.lang}.json'), "r", encoding="utf-8") as file:
+                return json.load(file)
+        except FileNotFoundError:
+            return {}
+
+    def get(self, key):
+        key = key.lower().strip()
+        return self.translations.get(key, key)
