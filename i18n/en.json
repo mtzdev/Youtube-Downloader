@@ -1,4 +1,5 @@
 {
+	"search_text": "Enter video link or name to search.",
 	"channel": "Channel",
 	"click_to_define": "Click here to set",
 	"config_download": "Download Settings",
@@ -25,5 +26,9 @@
 	"search_limit": "Search Limit:",
 	"search_limit_desc": "Higher values may slow down the search process.",
 	"select_dir_to_download": "Select a directory to download",
-	"theme": "Theme:"
+	"theme": "Theme:",
+	"no_results": "No results found",
+	"no_results_desc": "No videos were found with your search. Please try again with different keywords.",
+	"update": "Update Available!",
+	"update_desc": "A new version with more features of the app is available for download! Would you like to update?"	
 }

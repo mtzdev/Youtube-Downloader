@@ -1,4 +1,5 @@
 {
+	"search_text": "Insira o link ou nome do vídeo para pesquisar.",
 	"channel": "Canal",
 	"click_to_define": "Clique aqui para definir",
 	"config_download": "Configurações de Download",
@@ -25,5 +26,9 @@
 	"search_limit": "Limite de Resultados:",
 	"search_limit_desc": "Quanto maior a quantidade de resultados, mais lenta será a pesquisa.",
 	"select_dir_to_download": "Selecione o diretório para download",
-	"theme": "Tema:"
+	"theme": "Tema:",
+	"no_results": "Nenhum resultado encontrado",
+	"no_results_desc": "Nenhum vídeo foi encontrado com a sua pesquisa. Tente novamente com outras palavras-chave.",
+	"update": "Atualização Disponível!",
+	"update_desc": "Uma nova versão com mais recursos do aplicativo está disponível para download! Você deseja atualizar?"
 }

@@ -2,12 +2,14 @@ from PySide6.QtCore import QSettings
 from os import path
 import json
 
+CURRENT_VERSION = '1.2.1'
+
 class Settings:
     def __init__(self):
         self.settings = QSettings("YtDownloader-mtzdev", "Configurations")
 
     def setupSettings(self):
-        self.settings.setValue('Default', '1.2')
+        self.settings.setValue('Default', CURRENT_VERSION)
 
         default_settings = {
             'Theme': 'dark',

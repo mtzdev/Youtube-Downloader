@@ -19,6 +19,8 @@ from PySide6.QtWidgets import (QApplication, QLabel, QLineEdit, QListWidget,
     QListWidgetItem, QMainWindow, QPushButton, QSizePolicy,
     QStatusBar, QWidget)
 
+from utils import Translator
+
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
@@ -56,7 +58,8 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
-        self.searchBar.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Insira o link ou nome do v\u00eddeo para pesquisar.", None))
+        translate = Translator()
+        self.searchBar.setPlaceholderText(QCoreApplication.translate("MainWindow", translate.get("search_text"), None))
         self.configButton.setText("")
     # retranslateUi
 

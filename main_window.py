@@ -5,7 +5,7 @@ from PySide6.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkRe
 from configurations import MainSettings, DownloadSettings
 from search import getVideosThread
 import re
-from utils import get_resource, Translator
+from utils import get_resource, Translator, CURRENT_VERSION
 
 from ui.MainWindow import Ui_MainWindow
 
@@ -16,7 +16,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setWindowTitle("Youtube Downloader")
         self.setFixedSize(self.width(), self.height())
         self.networkManager = QNetworkAccessManager()
-        self.statusbar.showMessage("Version 1.2 - by mtzdev")
+        self.statusbar.showMessage(f"Version {CURRENT_VERSION} - by mtzdev")
         self.i18n = Translator()
 
         self.loadingGif = QMovie(get_resource("data/loading.gif"))
@@ -25,7 +25,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.searchButton = self.searchBar.addAction(QIcon(get_resource("data/search_dark.svg")), self.searchBar.ActionPosition.LeadingPosition)
         self.searchBar.setStyleSheet("border-radius: 6px; font-size: 15px")
+        self.searchButton.triggered.connect(self.startSearch)
         self.searchBar.returnPressed.connect(self.startSearch)
+
+        self.clearButton = self.searchBar.addAction(QIcon(get_resource("data/x.png")), self.searchBar.ActionPosition.TrailingPosition)
+        self.clearButton.triggered.connect(lambda: self.searchBar.clear())
+        self.clearButton.setVisible(False)
+        self.searchBar.textChanged.connect(lambda: self.clearButton.setVisible(bool(self.searchBar.text())))
 
         self.configs = MainSettings(self.i18n)
         self.configButton.setIcon(QIcon(get_resource("data/config_dark.svg")))
@@ -81,6 +87,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.loadingGif.stop()
 
     def processVideoResults(self, results):
+        if not results:
+            QMessageBox.information(self, self.i18n.get("no_results"), self.i18n.get("no_results_desc"), QMessageBox.Ok)
+            return
+
         for video in results:
             self.add_video_to_list(video['title'], video['channel'], video['duration'], video['thumbnail'], video['link'])
 
@@ -116,7 +126,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         titleLabel = QLabel(title)
         titleLabel.setStyleSheet('font-size: 14px; font-weight: bold; border: 0px;')
 
-        channelLabel = QLabel(f'{self.i18n.get("channel")} {channel}')
+        channelLabel = QLabel(f'{self.i18n.get("channel")}: {channel}')
         channelLabel.setStyleSheet('font-size: 12px; color: gray; border: 0px;')
 
         duration = int(duration)
