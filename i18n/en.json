@@ -8,7 +8,6 @@
 	"download": "Download",
 	"download_dir_selection_error": "An error occurred while selecting the download directory.\nTry selecting another folder.",
 	"download_error": "Error detected!",
-	"download_error_desc": "An error occurred while downloading.\nPlease try again later.\nError:",
 	"download_finished": "Download complete",
 	"download_finished_desc": "<span style='font-size: 16px'><b>Download completed successfully!</b><br>Downloaded video:",
 	"download_folder": "Download Folder:",
@@ -30,5 +29,11 @@
 	"no_results": "No results found",
 	"no_results_desc": "No videos were found with your search. Please try again with different keywords.",
 	"update": "Update Available!",
-	"update_desc": "A new version with more features of the app is available for download! Would you like to update?"	
+	"update_desc": "A new version with more features of the app is available for download! Would you like to update?",
+	"no_title": "No title",
+	"unknown_channel": "Unknown channel",
+	"download_generic_error": "An error occurred while downloading the video.\nPlease try again later.",
+	"geo_restricted_error": "This video is not available for download in your country.",
+	"unavailable_video_error": "This video is not available for download.\nCheck if the video is not private or blocked.",
+	"unknown_error": "An unknown error occurred while downloading the video.\nError information:"
 }

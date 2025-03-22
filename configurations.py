@@ -122,7 +122,7 @@ class DownloadSettings(QWidget):
         self.downloadThread.finishedDownload.connect(lambda: QMessageBox.information(self, self.i18n.get("download_finished"), f"{self.i18n.get("download_finished_desc")} {self.title}", QMessageBox.StandardButton.Ok))
         self.downloadThread.finishedDownload.connect(self.downloadThread.deleteLater)
         self.downloadThread.finishedDownload.connect(self.close)
-        self.downloadThread.error.connect(lambda error: QMessageBox.critical(self, self.i18n.get("download_error"), f"{self.i18n.get("download_error_desc")} {error}", QMessageBox.StandardButton.Ok, QMessageBox.StandardButton.Ok))
+        self.downloadThread.error.connect(lambda error: QMessageBox.critical(self, self.i18n.get("download_error"), error, QMessageBox.StandardButton.Ok, QMessageBox.StandardButton.Ok))
         self.downloadThread.progress.connect(lambda value: self.progress.setValue(value))
         self.downloadThread.start()
 

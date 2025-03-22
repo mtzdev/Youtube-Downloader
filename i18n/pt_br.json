@@ -8,7 +8,6 @@
 	"download": "BAIXAR",
 	"download_dir_selection_error": "Ocorreu um erro ao selecionar o diretório de download.\nTente selecionar outra pasta.",
 	"download_error": "Erro detectado!",
-	"download_error_desc": "Ocorreu um erro ao baixar o vídeo.\nTente novamente mais tarde.\nErro:",
 	"download_finished": "Download concluído",
 	"download_finished_desc": "<span style='font-size: 16px'><b>Download concluído com sucesso!</b><br>Vídeo baixado:",
 	"download_folder": "Pasta de Download:",
@@ -30,5 +29,11 @@
 	"no_results": "Nenhum resultado encontrado",
 	"no_results_desc": "Nenhum vídeo foi encontrado com a sua pesquisa. Tente novamente com outras palavras-chave.",
 	"update": "Atualização Disponível!",
-	"update_desc": "Uma nova versão com mais recursos do aplicativo está disponível para download! Você deseja atualizar?"
+	"update_desc": "Uma nova versão com mais recursos do aplicativo está disponível para download! Você deseja atualizar?",
+	"no_title": "Sem título",
+	"unknown_channel": "Canal desconhecido",
+	"download_generic_error": "Ocorreu um erro ao baixar o vídeo.\nTente novamente mais tarde.",
+	"geo_restricted_error": "Esse vídeo não está disponível para baixar em seu país.",
+	"unavailable_video_error": "Esse vídeo não está disponível para baixar.\nVerifique se o vídeo não está privado ou bloqueado.",
+	"unknown_error": "Ocorreu um erro desconheido ao baixar o vídeo.\nInformações do erro:"
 }

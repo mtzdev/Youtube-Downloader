@@ -3,7 +3,7 @@ from PySide6.QtGui import QIcon, QPixmap, QMovie
 from PySide6.QtCore import Qt, QSize, QUrl, QByteArray
 from PySide6.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkReply
 from configurations import MainSettings, DownloadSettings
-from search import getVideosThread
+from search import getVideosThread, getVideoFromURLThread
 import re
 from utils import get_resource, Translator, CURRENT_VERSION
 
@@ -61,21 +61,27 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if query.strip() == '':
             return
 
-        if bool(re.match(r"^(https?:\/\/)?(www\.)?(youtu\.be\/|youtube\.com\/)", query)):  # links do yt
-            match = re.search(r"(?:youtu\.be/|youtube\.com/(?:watch\?v=|embed/|v/|shorts/|live/))([^?&]+)", query)
-            if match:
-                query = match.group(1)
-            else:
-                QMessageBox.information(self, self.i18n.get("link_not_supported"), self.i18n.get("link_not_supported_desc"), QMessageBox.Ok)
-                return
-
         self.searchBar.setDisabled(True)
-
         self.listWidget.clear()
         self.loadingLabel.show()
         self.loadingGif.start()
 
-        self.search_thread = getVideosThread(query, self.configs.searchLimit.value())
+        if bool(re.match(r"^(https?:\/\/)?(www\.)?(youtu\.be\/|youtube\.com\/)", query)):  # links do yt
+            match = re.search(r"(?:youtu\.be/|youtube\.com/(?:watch\?v=|embed/|v/|shorts/|live/))([^?&]+)", query)
+            if match:
+                query = match.group(1)
+                self.search_thread = getVideosThread(query, self.configs.searchLimit.value())
+            else:
+                QMessageBox.information(self, self.i18n.get("link_not_supported"), self.i18n.get("link_not_supported_desc"), QMessageBox.Ok)
+                return
+
+        elif bool(re.match(r"^(https?:\/\/)[^\s/$.?#].[^\s]*$", query)):  # links em geral
+            self.search_thread = getVideoFromURLThread(query)
+
+        else:  # pesquisa
+            self.search_thread = getVideosThread(query, self.configs.searchLimit.value())
+
+
         self.search_thread.finishedSearch.connect(self.processVideoResults)
         self.search_thread.finishedSearch.connect(self.unlockSearch)
         self.search_thread.finishedSearch.connect(self.search_thread.deleteLater)
