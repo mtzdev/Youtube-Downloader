@@ -2,7 +2,7 @@ from PySide6.QtCore import QSettings
 from os import path
 import json
 
-CURRENT_VERSION = '1.3.0'
+CURRENT_VERSION = '1.3.1'
 
 class Settings:
     def __init__(self):
